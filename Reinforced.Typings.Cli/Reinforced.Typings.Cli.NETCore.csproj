@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Reinforced.Typings.Cli</RootNamespace>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>    
@@ -19,6 +18,10 @@
 		<FileVersion>1.5.8</FileVersion>
 		<InformationalVersion>1.5.8</InformationalVersion>
 		<DefineConstants>$(DefineConstants);$(RtAdditionalConstants);</DefineConstants>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;netcoreapp2.2</TargetFrameworks>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>..\Reinforced_pub.snk</AssemblyOriginatorKeyFile>
+		<PublicSign>true</PublicSign>
 	</PropertyGroup>    
 	<ItemGroup>
 		<Compile Remove="Properties\AssemblyInfo.cs" />

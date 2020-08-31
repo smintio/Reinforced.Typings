@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;netcoreapp2.2</TargetFrameworks>
     <RootNamespace>Reinforced.Typings.Integrate</RootNamespace>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <DebugSymbols Condition="$(Configuration) == 'Release'">false</DebugSymbols>
