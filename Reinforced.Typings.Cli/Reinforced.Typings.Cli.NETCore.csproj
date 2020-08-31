@@ -43,10 +43,4 @@
 		<ProjectReference Include="..\Reinforced.Typings\Reinforced.Typings.NETCore.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Include="..\Reinforced_pub.snk">
-	    <Link>Reinforced_pub.snk</Link>
-	  </None>
-	</ItemGroup>
-
 </Project>
