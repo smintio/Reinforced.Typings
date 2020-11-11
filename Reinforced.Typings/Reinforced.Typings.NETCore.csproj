@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Reinforced.Typings</RootNamespace>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -15,7 +16,6 @@
 	<FileVersion>1.5.8</FileVersion>
 	<InformationalVersion>1.5.8</InformationalVersion>
 	<DefineConstants>$(DefineConstants);$(RtAdditionalConstants);</DefineConstants>
-	<TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp2.1;netcoreapp3.1;netcoreapp2.2</TargetFrameworks>	
   </PropertyGroup>    
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
