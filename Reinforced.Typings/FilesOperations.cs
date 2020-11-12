@@ -36,9 +36,6 @@ namespace Reinforced.Typings
                 {
                     if (File.Exists(origFile)) File.Delete(origFile);
                     File.Move(tmpFile, origFile);
-#if DEBUG
-                    Console.WriteLine("File replaced: {0} -> {1}", tmpFile, origFile);
-#endif
                 }
                 catch (Exception ex)
                 {
@@ -105,9 +102,6 @@ namespace Reinforced.Typings
                 {
                     File.Delete(fileName);
                 }
-#if DEBUG
-                Console.WriteLine("Temp file aquired: {0}", fileName);
-#endif
                 _tmpFiles.Add(fileName);
             }
             catch (Exception ex)

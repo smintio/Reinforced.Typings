@@ -49,9 +49,6 @@ namespace Reinforced.Typings.Generators
 
 
                 if (member!=null) ns.CompilationUnits.Add(member);
-#if DEBUG
-                Console.WriteLine("Exported {0}", type);
-#endif
             }
 
             if (Context.Global.UseModules) ns.GenerationMode = NamespaceGenerationMode.Namespace;
