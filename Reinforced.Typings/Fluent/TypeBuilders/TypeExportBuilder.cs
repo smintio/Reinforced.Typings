@@ -51,7 +51,7 @@ namespace Reinforced.Typings.Fluent
                 catch (Exception ex)
                 {
                     ErrorMessages.RTE0006_FluentSingleError.Throw(ex.Message, "property",
-                        string.Format("{0}.{1}", member.DeclaringType.FullName, member.Name));
+                        string.Format("{0}.{1}", member.DeclaringType.FullName, member.Name), ex);
                 }
             }
         }
@@ -74,7 +74,7 @@ namespace Reinforced.Typings.Fluent
                 catch (Exception ex)
                 {
                     ErrorMessages.RTE0006_FluentSingleError.Throw(ex.Message, "method",
-                        string.Format("{0}.{1}(...)", methodInfo.DeclaringType.FullName, methodInfo.Name));
+                        string.Format("{0}.{1}(...)", methodInfo.DeclaringType.FullName, methodInfo.Name), ex);
                 }
             }
         }

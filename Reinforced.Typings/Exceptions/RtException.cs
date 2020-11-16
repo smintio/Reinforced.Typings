@@ -24,7 +24,8 @@ namespace Reinforced.Typings.Exceptions
         /// <param name="message">Error message</param>
         /// <param name="code">Error code</param>
         /// <param name="subcategory">Error subcategory (optional)</param>
-        public RtException(string message, int code, string subcategory = "") : base(message)
+        /// <param name="innerException">Caught inner exception (optional)</param>
+        public RtException(string message, int code, string subcategory = "", Exception innerException = null) : base(message, innerException)
         {
             Code = code;
             Subcategory = subcategory;

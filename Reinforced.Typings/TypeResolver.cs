@@ -146,7 +146,7 @@ namespace Reinforced.Typings
             }
             catch (Exception ex)
             {
-                ErrorMessages.RTE0005_TypeResolvationError.Throw(t.FullName, ex.Message);
+                ErrorMessages.RTE0005_TypeResolvationError.Throw(t.FullName, ex.Message, ex);
                 return null; // unreacheable
             }
         }
@@ -185,7 +185,7 @@ namespace Reinforced.Typings
             }
             catch (Exception ex)
             {
-                ErrorMessages.RTE0005_TypeResolvationError.Throw(t.FullName, ex.Message);
+                ErrorMessages.RTE0005_TypeResolvationError.Throw(t.FullName, ex.Message, ex);
                 return null; // unreacheable
             }
         }

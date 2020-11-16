@@ -91,7 +91,7 @@ namespace Reinforced.Typings.Fluent
                     }
                     catch (Exception ex)
                     {
-                        ErrorMessages.RTE0006_FluentSingleError.Throw(ex.Message, "type", type.FullName);
+                        ErrorMessages.RTE0006_FluentSingleError.Throw(ex.Message, "type", type.FullName, ex);
                     }
                 }
             }

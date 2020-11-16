@@ -161,7 +161,7 @@ namespace Reinforced.Typings.Fluent
                     }
                     catch (Exception ex)
                     {
-                        ErrorMessages.RTE0006_FluentSingleError.Throw(ex.Message, "enum", type.FullName);
+                        ErrorMessages.RTE0006_FluentSingleError.Throw(ex.Message, "enum", type.FullName, ex);
                     }
                 }
             }

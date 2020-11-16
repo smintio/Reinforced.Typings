@@ -132,7 +132,7 @@ namespace Reinforced.Typings
                     }
                     catch (Exception ex)
                     {
-                        ErrorMessages.RTE0003_GeneratorInstantiate.Throw(generatorType.FullName, ex.Message);
+                        ErrorMessages.RTE0003_GeneratorInstantiate.Throw(generatorType.FullName, ex.Message, ex);
                     }
                 }
                 return (ITsCodeGenerator<T>)_generatorsCache[generatorType];

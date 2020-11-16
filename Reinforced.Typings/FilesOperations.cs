@@ -39,7 +39,7 @@ namespace Reinforced.Typings
                 }
                 catch (Exception ex)
                 {
-                    ErrorMessages.RTE0002_DeployingFilesError.Throw(origFile, ex.Message);
+                    ErrorMessages.RTE0002_DeployingFilesError.Throw(origFile, ex.Message, ex);
                 }
             }
         }
@@ -106,7 +106,7 @@ namespace Reinforced.Typings
             }
             catch (Exception ex)
             {
-                ErrorMessages.RTE0001_TempFileError.Throw(fileName, ex.Message);
+                ErrorMessages.RTE0001_TempFileError.Throw(fileName, ex.Message, ex);
             }
 
             return File.OpenWrite(fileName);

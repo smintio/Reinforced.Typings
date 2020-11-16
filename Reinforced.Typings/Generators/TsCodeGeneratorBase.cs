@@ -47,7 +47,7 @@ namespace Reinforced.Typings.Generators
             }
             catch (Exception ex)
             {
-                ErrorMessages.RTE0004_GeneratorError.Throw(GetType().FullName, ex.Message);
+                ErrorMessages.RTE0004_GeneratorError.Throw(GetType().FullName, ex.Message, ex);
                 return null; // unreacheable
             }
 

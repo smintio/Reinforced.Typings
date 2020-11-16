@@ -1,4 +1,7 @@
-﻿namespace Reinforced.Typings.Exceptions
+﻿using System;
+using System.Linq;
+
+namespace Reinforced.Typings.Exceptions
 {
     class ErrorMessage
     {
@@ -17,7 +20,13 @@
 
         public void Throw(params object[] formatParameters)
         {
-            throw new RtException(string.Format(MessageText, formatParameters), Code, Subcategory);
+            Exception innerException = formatParameters?.OfType<Exception>().FirstOrDefault();
+            object[] parameters = innerException is null ? formatParameters : 
+                formatParameters?.Where((param) => !ReferenceEquals(param, innerException)).ToArray();
+
+            parameters ??= Array.Empty<object>();
+            
+            throw new RtException(string.Format(MessageText, parameters), Code, Subcategory, innerException);
         }
 
         public RtWarning Warn(params object[] formatParameters)

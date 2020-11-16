@@ -64,7 +64,7 @@ namespace Reinforced.Typings.Xmldoc
             catch (Exception ex)
             {
                 _isDocumentationExists = false;
-                warnings.Add(ErrorMessages.RTW0006_DocumentationParseringError.Warn(docFilePath, ex.Message));
+                warnings.Add(ErrorMessages.RTW0006_DocumentationParseringError.Warn(docFilePath, ex.Message, ex));
             }
         }
 
