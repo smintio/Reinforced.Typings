@@ -8,7 +8,7 @@
     <RootNamespace>Reinforced.Typings.Tests</RootNamespace>
     <AssemblyName>Reinforced.Typings.Tests</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

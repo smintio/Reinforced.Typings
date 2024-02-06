@@ -18,7 +18,7 @@
 		<FileVersion>1.5.9</FileVersion>
 		<InformationalVersion>1.5.9</InformationalVersion>
 		<DefineConstants>$(DefineConstants);$(RtAdditionalConstants);</DefineConstants>
-		<TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 	</PropertyGroup>    
 	<ItemGroup>
 		<Compile Remove="Properties\AssemblyInfo.cs" />
