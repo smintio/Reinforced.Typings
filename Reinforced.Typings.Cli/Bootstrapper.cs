@@ -51,11 +51,12 @@ namespace Reinforced.Typings.Cli
     /// </summary>
     public static class Bootstrapper
     {
-        private static ExporterConsoleParameters _parameters;
+        
         private static TextReader _profileReader;
         private static string _profilePath;
         private static AssemblyManager _assemblyManager;
-
+        private static HashSet<int> _suppressedWarnings = new HashSet<int>();
+        
         /// <summary>
         /// Usage: rtcli.exe Assembly.dll [Assembly2.dll Assembly3.dll ... etc] file.ts
         /// </summary>
@@ -64,6 +65,7 @@ namespace Reinforced.Typings.Cli
         {
             Console.WriteLine("Reinforced.Typings CLI generator (c) 2015-2018 by Pavel B. Novikov");
 
+            ExporterConsoleParameters parameters = null;
             if (args.Length == 0)
             {
                 PrintHelp();
@@ -84,19 +86,21 @@ namespace Reinforced.Typings.Cli
                         Console.WriteLine("Cannot find profile {0}, exiting", args[1]);
                         return;
                     }
-                    _parameters = ExtractParametersFromFile(args[1]);
+                    parameters = ExtractParametersFromFile(args[1]);
                 }
                 else
                 {
-                    _parameters = ExtractParametersFromArgs(args);
+                    parameters = ExtractParametersFromArgs(args);
                 }
-                if (_parameters == null)
+                if (parameters == null)
                 {
                     Console.WriteLine("No valid parameters found. Exiting.");
                     return;
                 }
-                var settings = InstantiateExportContext();
-                ResolveFluentMethod(settings);
+
+                _suppressedWarnings = ParseSuppressedWarnings(parameters.SuppressedWarnings);
+                var settings = InstantiateExportContext(parameters);
+                ResolveFluentMethod(settings,parameters);
                 TsExporter exporter = new TsExporter(settings);
                 exporter.Export();
                 _assemblyManager.TurnOffAdditionalResolvation();
@@ -105,14 +109,14 @@ namespace Reinforced.Typings.Cli
                     var msg = VisualStudioFriendlyErrorMessage.Create(rtWarning);
                     Console.WriteLine(msg.ToString());
                 }
-                ReleaseReferencesTempFile();
+                ReleaseReferencesTempFile(parameters);
             }
             catch (RtException rtException)
             {
                 var error = VisualStudioFriendlyErrorMessage.Create(rtException);
                 Console.WriteLine(error.ToString());
                 Console.WriteLine(rtException.StackTrace);
-                ReleaseReferencesTempFile();
+                ReleaseReferencesTempFile(parameters);
                 Environment.Exit(1);
             }
             catch (TargetInvocationException ex)
@@ -154,18 +158,18 @@ namespace Reinforced.Typings.Cli
             Console.WriteLine("Please build CompileTypeScript task to update javascript sources");
         }
 
-        private static void ReleaseReferencesTempFile()
+        private static void ReleaseReferencesTempFile(ExporterConsoleParameters parameters)
         {
             if (_profileReader != null) _profileReader.Dispose();
             if (!string.IsNullOrEmpty(_profilePath)) File.Delete(_profilePath);
-            if (_parameters == null) return;
-            if (!string.IsNullOrEmpty(_parameters.ReferencesTmpFilePath)) File.Delete(_parameters.ReferencesTmpFilePath);
+            if (parameters == null) return;
+            if (!string.IsNullOrEmpty(parameters.ReferencesTmpFilePath)) File.Delete(parameters.ReferencesTmpFilePath);
         }
 
-        private static void ResolveFluentMethod(ExportContext context)
+        private static void ResolveFluentMethod(ExportContext context, ExporterConsoleParameters parameters)
         {
-            if (string.IsNullOrEmpty(_parameters.ConfigurationMethod)) return;
-            var methodPath = _parameters.ConfigurationMethod;
+            if (string.IsNullOrEmpty(parameters.ConfigurationMethod)) return;
+            var methodPath = parameters.ConfigurationMethod;
             var path = new Stack<string>(methodPath.Split('.'));
             var method = path.Pop();
             var fullQualifiedType = string.Join(".", path.Reverse());
@@ -190,20 +194,21 @@ namespace Reinforced.Typings.Cli
                     }
                 }
             }
-            if (!isFound) BuildWarn("Cannot find configured fluent method '{0}'", methodPath);
+            if (!isFound) BuildWarn(ErrorMessages.RTW0009_CannotFindFluentMethod, methodPath);
         }
 
-        public static ExportContext InstantiateExportContext()
+        public static ExportContext InstantiateExportContext(ExporterConsoleParameters parameters)
         {
-            _assemblyManager = new AssemblyManager(_parameters.SourceAssemblies,_profileReader,_parameters.ReferencesTmpFilePath,BuildWarn);
+            _assemblyManager = new AssemblyManager(parameters.SourceAssemblies,_profileReader,parameters.ReferencesTmpFilePath,BuildWarn);
 
             var srcAssemblies = _assemblyManager.GetAssembliesFromArgs();
             ExportContext context = new ExportContext(srcAssemblies)
             {
-                Hierarchical = _parameters.Hierarchy,
-                TargetDirectory = _parameters.TargetDirectory,
-                TargetFile = _parameters.TargetFile,
-                DocumentationFilePath = _parameters.DocumentationFilePath
+                Hierarchical = parameters.Hierarchy,
+                TargetDirectory = parameters.TargetDirectory,
+                TargetFile = parameters.TargetFile,
+                DocumentationFilePath = parameters.DocumentationFilePath,
+                SuppressedWarningCodes = ParseSuppressedWarnings(parameters.SuppressedWarnings)
             };
             return context;
         }
@@ -247,10 +252,11 @@ namespace Reinforced.Typings.Cli
             }
         }
 
-        private static void BuildWarn(string message, params object[] args)
+        private static void BuildWarn(ErrorMessage msg, params object[] args)
         {
-            var warningMessage = string.Format(message, args);
-            VisualStudioFriendlyErrorMessage vsm = new VisualStudioFriendlyErrorMessage(99, warningMessage, VisualStudioFriendlyMessageType.Warning, "Build");
+            
+            if (_suppressedWarnings.Contains(msg.Code)) return;
+            VisualStudioFriendlyErrorMessage vsm = VisualStudioFriendlyErrorMessage.Create(msg.Warn(args));
             Console.WriteLine(vsm.ToString());
         }
 
@@ -259,6 +265,27 @@ namespace Reinforced.Typings.Cli
             var errorMessage = string.Format(message, args);
             VisualStudioFriendlyErrorMessage vsm = new VisualStudioFriendlyErrorMessage(999, errorMessage, VisualStudioFriendlyMessageType.Error, "Unexpected");
             Console.WriteLine(vsm.ToString());
+        }
+
+        public static HashSet<int> ParseSuppressedWarnings(string input)
+        {
+            var result = new HashSet<int>();
+            if (string.IsNullOrEmpty(input)) return result;
+            var values = input.Split(';');
+            foreach (var warningCode in values)
+            {
+                //for some reason there is no StringSplitOptions for netcoreapp1.0
+                if (string.IsNullOrEmpty(warningCode)) continue;
+                var filtered = new string(warningCode.Where(char.IsDigit).ToArray());
+                bool parsed = int.TryParse(filtered, out int intWarningCode);
+                if (parsed) result.Add(intWarningCode);
+                else
+                {
+                    BuildWarn(ErrorMessages.RTW0010_CannotParseWarningCode,warningCode);
+                }
+            }
+
+            return result;
         }
 
         private static ExporterConsoleParameters ExtractParametersFromFile(string fileName)
@@ -278,7 +305,7 @@ namespace Reinforced.Typings.Cli
                 var kv = trimmed.Split('=');
                 if (kv.Length != 2)
                 {
-                    BuildWarn("Unrecognized parameter: {0}", s);
+                    BuildWarn(ErrorMessages.RTW0011_UnrecognizedConfigurationParameter, s);
                     continue;
                 }
 
@@ -288,7 +315,7 @@ namespace Reinforced.Typings.Cli
                 var prop = t._GetProperty(key);
                 if (prop == null)
                 {
-                    BuildWarn("Unrecognized parameter: {0}", key);
+                    BuildWarn(ErrorMessages.RTW0011_UnrecognizedConfigurationParameter, key);
                     continue;
                 }
 
@@ -312,7 +339,7 @@ namespace Reinforced.Typings.Cli
                     continue;
                 }
 
-                BuildWarn("Cannot parse parameter for source property {0}", key);
+                BuildWarn(ErrorMessages.RTW0012_UnrecognizedConfigurationParameterValue, key);
             }
 
             try
@@ -325,6 +352,7 @@ namespace Reinforced.Typings.Cli
                 PrintHelp();
                 return null;
             }
+
             return instance;
         }
     }

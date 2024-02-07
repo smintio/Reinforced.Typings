@@ -3,7 +3,7 @@ What is that?
 You develop frontend applications with TypeScript and .NET Backend? You need Reinforced.Typings.
 
 It converts .NET classes into TypeScript code. Suffering has ended - you don't need to write and maintain boring TypeScript glue code for your DTOs/ViewModels/APIs anymore - RT can generate it from C# app. 
-Moreover, it integrates with VisualStudio build process and (re)generates glue code every time you rebuild .NET backend. So you get immediately notified when backend's API/DTOs changed and frontend is broken.
+Moreover, it integrates with MSBuild build process and (re)generates glue code every time you rebuild .NET backend. So you get immediately notified when backend's API/DTOs changed and frontend is broken.
 
 Check out [documentation](https://github.com/reinforced/Reinforced.Typings/wiki) to discover numbers of useful features (type substitutions, modules, code generators, fluent configuration, multi-file export, JSDOC). 
 
@@ -17,12 +17,9 @@ PM> Install-Package Reinforced.Typings
 
 News
 =================
-> :metal: Version **1.5.9** released
+> Version **1.6.3** released
 
-- PR #188 - Support of .NET 5 :star:
-- PR #187 - Support of C#8 nullables
-- PR #183 - RtAsync and more efficiend promists handling
-- build fixes
+- Support of .NET 8
 
 Support policy
 =================

@@ -1,6 +1,8 @@
-#addin "Cake.FileHelpers"
+#addin nuget:https://api.nuget.org/v3/index.json?package=Cake.FileHelpers&version=5.0.0
+#tool nuget:?package=NuGet.CommandLine&version=6.4.0
+
 var target = Argument("target", "Build");
-const string version = "1.5.9";
+const string version = "1.6.3";
 
 Task("Clean")
   .Does(() =>
@@ -33,13 +35,16 @@ const string NET461 = "net461";
 const string NET46 = "net46";
 const string NET45 = "net45";
 const string NET50 = "net5.0";
+const string NET60 = "net6.0";
+const string NET70 = "net7.0";
+const string NET80 = "net8.0";
 
-var cliFrameworks = new[] { NETCORE10, NETCORE11, NET45, NET461,NETCORE20,NETCORE21,NETCORE22,NETCORE30,NETCORE31, NET50}; 
-var rtFrameworks = new[]  { NETCORE10, NETCORE11, NETSTANDARD15,NETSTANDARD20,NETCORE20,NETCORE21,NETCORE22,NETCORE30,NETCORE31,NET45, NET461, NET50};
-var taskFrameworks = new[] { NET46, NETSTANDARD20};
+var cliFrameworks = new[] { NETCORE10, NETCORE11, NET45, NET461,NETCORE20,NETCORE21,NETCORE22,NETCORE30,NETCORE31, NET50, NET60, NET70, NET80 };
+var rtFrameworks = new[]  { NETCORE10, NETCORE11, NETSTANDARD15,NETSTANDARD20,NETCORE20,NETCORE21,NETCORE22,NETCORE30,NETCORE31,NET45, NET461, NET50, NET60, NET70, NET80};
+var taskFrameworks = new[] { NET46, NETSTANDARD20 };
 
-var netCore = new HashSet<string>(new[]{NETSTANDARD15,NETSTANDARD20,NETCORE10,NETCORE11,NETCORE20,NETCORE21,NETCORE22,NETCORE30,NETCORE31,NET50});
-var netCoreApp = new HashSet<string>(new[]{NETCORE20,NETCORE21,NETCORE22,NETCORE30,NETCORE31,NET50});
+var netCore = new HashSet<string>(new[]{NETSTANDARD15,NETSTANDARD20,NETCORE10,NETCORE11,NETCORE20,NETCORE21,NETCORE22,NETCORE30,NETCORE31,NET50,NET60,NET70,NET80});
+var netCoreApp = new HashSet<string>(new[]{NETCORE20,NETCORE21,NETCORE22,NETCORE30,NETCORE31,NET50,NET60,NET70,NET80});
 
 const string CliNetCoreProject = "../Reinforced.Typings.Cli/Reinforced.Typings.Cli.NETCore.csproj";
 const string RtNetCoreProject = "../Reinforced.Typings/Reinforced.Typings.NETCore.csproj";
@@ -208,30 +213,21 @@ Task("Build")
   Information("---------");
   // Copy nuspec
   CopyFileToDirectory("../stuff/Reinforced.Typings.nuspec", packageRoot);
-  ReplaceTextInFiles("../package/*.nuspec","$$VERSION$$",version);
+  
   var rn = string.Empty;
   if (System.IO.File.Exists(System.IO.Path.Combine("../stuff/relnotes", version) + ".md")){
         rn = System.IO.File.ReadAllText(System.IO.Path.Combine("../stuff/relnotes", version) + ".md");
   }
 
-  ReplaceTextInFiles("../package/*.nuspec","$$RELNOTES$$",rn);
-
   Information("---------");
   Information("Packaging");
   Information("---------");  
 
-  var nugetSettings = new ProcessSettings
-    {     
-      Arguments = "pack ../package/Reinforced.Typings.nuspec -OutputDirectory \"../\"" 
-    };
-
-  using(var process = StartAndReturnProcess("nuget", nugetSettings))
-  {
-      process.WaitForExit();      
-  }
-
-  
-
+  NuGetPack("../package/Reinforced.Typings.nuspec",new NuGetPackSettings(){
+    ReleaseNotes = new List<string>() { rn },
+    Version = version,
+    OutputDirectory = "../"
+  });  
   Information("Build complete");
 });
 
