@@ -111,11 +111,13 @@ namespace Reinforced.Typings.Fluent
                     ? Path.GetFileNameWithoutExtension(assmbly.Location) + ".xml"
                     : documentationFileName);
 
+#pragma warning disable SYSLIB0012 // Type or member is obsolete
             var codebaseFilePath = Path.Combine(
                 Path.GetDirectoryName(assmbly.GetCodeBase()),
                 string.IsNullOrEmpty(documentationFileName)
                     ? Path.GetFileNameWithoutExtension(assmbly.CodeBase) + ".xml"
                     : documentationFileName);
+#pragma warning restore SYSLIB0012 // Type or member is obsolete
             if (File.Exists(locationFilePath)) conf.AdditionalDocumentationPathes.Add(locationFilePath);
             else if (File.Exists(codebaseFilePath)) conf.AdditionalDocumentationPathes.Add(codebaseFilePath);
             return conf;
@@ -123,8 +125,10 @@ namespace Reinforced.Typings.Fluent
 
         private static string GetCodeBase(this Assembly asmbly)
         {
+#pragma warning disable SYSLIB0012 // Type or member is obsolete
             if (string.IsNullOrEmpty(asmbly.CodeBase)) return string.Empty;
             return asmbly.CodeBase.Replace("file:///", string.Empty);
+#pragma warning restore SYSLIB0012 // Type or member is obsolete
 
         }
     }
