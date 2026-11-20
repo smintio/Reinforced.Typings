@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Reinforced.Typings.Cli</RootNamespace>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>    
@@ -19,7 +19,7 @@
 		<FileVersion>1.6.3</FileVersion>
 		<InformationalVersion>1.6.3</InformationalVersion>
 		<DefineConstants>$(DefineConstants);$(RtAdditionalConstants);</DefineConstants>
-		<TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+		<TargetFrameworks>net10.0</TargetFrameworks>
 	</PropertyGroup>    
 	<ItemGroup>
 		<Compile Remove="Properties\AssemblyInfo.cs" />
